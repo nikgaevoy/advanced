@@ -4,17 +4,17 @@ In order to avoid problems with integers, we consider slightly modified version 
 	\caption{}\label{ALG}
 	\begin{algorithmic}[1]
 		\Procedure{Init}{}
-			\State Choose a random hash function $h: \segment{n} \to \segment{0, 1}$
-			\Comment{Yes, we can't, but it is not important}
-			\State $z \gets 1$
+		\State Choose a random hash function $h: \segment{n} \to \segment{0, 1}$
+		\Comment{Yes, we can't, but it is not important}
+		\State $z \gets 1$
 		\EndProcedure
 
 		\Procedure{Process}{$j$}
-			\State $z \gets \min(z, h(j))$
+		\State $z \gets \min(z, h(j))$
 		\EndProcedure
 
 		\Procedure{Output}{}
-			\State \Return $\frac{1}{z} - 1$
+		\State \Return $\frac{1}{z} - 1$
 		\EndProcedure
 	\end{algorithmic}
 \end{algorithm}
@@ -22,32 +22,34 @@ In order to avoid problems with integers, we consider slightly modified version 
 We will run $k$ (exact value will be defined later) copies of our algorithm and then output mean value of their answers. Let $\hat d_k$ denote the output of our algorithm and $d$ denote the true answer. We will also use $\hat d$ to denote $\hat d_1$ i.e. the answer of one copy of Algorithm~\ref{ALG}.
 
 \begin{claim}\label{Main}
-	For any $\eps$ and $\delta$ there exists such $k$ that
+	For any $\eps$ there exists such $k$ that
 
 	\begin{equation*}
-		\Prob{\abs{d - \hat d_k} \leq \eps d} \geq 1 - \delta
+		\Prob{\abs*{d - \hat d_k} \leq \eps d} \geq 1 - \delta
 	\end{equation*}
+
+	where $\delta$ is some constant less than $\frac12$.
 \end{claim}
 
 Let $X$ be a random variable uniformly distributed on $\segment{0, 1}$. Fix $d$. Then, $\hat d$ is equal to the minimum of $d$ i.i.d. copies of $X$. The cumulative distribution function for $\hat d$ is
 
 \begin{equation*}
-	F_{\hat d}(x) = 
-		\begin{cases}
-			0, & x < 0 \\
-			1 - (1 - x)^d, & 0 \leq x \leq 1 \\
-			1, & x > 1
-		\end{cases}
+	F_{\hat d}(x) =
+	\begin{cases}
+		0,             & x < 0           \\
+		1 - (1 - x)^d, & 0 \leq x \leq 1 \\
+		1,             & x > 1
+	\end{cases}
 \end{equation*}
 
 And, therefore, its density is
 
 \begin{equation*}
-	\rho_{\hat d}(x) = 
-		\begin{cases}
-			d (1 - x)^{d - 1}, & 0 \leq x \leq 1 \\
-			0, & \text{otherwise}
-		\end{cases}
+	\rho_{\hat d}(x) =
+	\begin{cases}
+		d (1 - x)^{d - 1}, & 0 \leq x \leq 1  \\
+		0,                 & \text{otherwise}
+	\end{cases}
 \end{equation*}
 
 First, we need to compute $\Ex{\hat d}$.
@@ -65,45 +67,76 @@ Note that it matches the formula in the output procedure of Algorithm~\ref{ALG}.
 		\item $\Ex{X} = 0$
 
 		\item $\Ex{X^2} = \sigma^2 > 0$
-		
-		\item $\Ex{\abs{X}^3} = \rho < \infty$
+
+		\item $\Ex{\abs*{X}^3} = \rho < \infty$
 	\end{itemize}
 
 	and $F_n$ be the cumulative distribution function of $\frac{1}{\sigma \sqrt{n}} \sum_{i \leq n} X_i$, then, for all $x$ and $n$
 
 	\begin{equation*}
-		\abs{F_n(x) - \Phi(x)} \leq \frac{C \rho}{\sigma^3 \sqrt{n}}
+		\abs*{F_n(x) - \Phi(x)} \leq \frac{C \rho}{\sigma^3 \sqrt{n}}
 	\end{equation*}
-	
+
 	where $C$ is some positive constant and $\Phi(x)$ denotes the cumulative distribution function of the standard normal distribution.
 \end{theorem}
 
-Thus, we want to compute $\Ex{Y_d^2}$ and $\Ex{\abs{Y_d}^3}$.
+Thus, we want to compute $\Ex{Y_d^2}$ and $\Ex{\abs*{Y_d}^3}$.
 
 \begin{equation*}
-	\Ex{Y_d^2} = \int_{0}^{1} d (1 - x)^{d - 1} (x - \frac{1}{d + 1})^2 = \frac{d}{(1 + d)^2 (2 + d)}
+	\Ex{Y_d^2} = \int_{0}^{1} d (1 - x)^{d - 1} \parens*{x - \frac{1}{d + 1}}^2 = \frac{d}{(1 + d)^2 (2 + d)}
 \end{equation*}
 
-Calculation of $\Ex{\abs{Y_d}^3}$ can cause psychological trauma\footnote{Its true value is $\frac{2 d (6 d^{2 + d} + (1 + d)^d - d^2 (1 + d)^d)}{(1 + d)^{4 + d} (2 + d) (3 + d)}$. Check it if you are brave enough.}, so instead of doing that we bound $\rho$ with $\BigO(d^{-3})$\footnote{Need to find a proper way to do that. Now it can be obtained from the value of $\rho$.}. Thus, our constants are
+Calculation of $\Ex{\abs*{Y_d}^3}$ can cause psychological trauma\footnote{Its true value is $\frac{2 d \parens*{ 6 d^{2 + d} + (1 + d)^d - d^2 (1 + d)^d }}{(1 + d)^{4 + d} (2 + d) (3 + d)}$. Check it if you are brave enough.}, so instead of doing that we bound $\rho$ with $\BigO \parens*{d^{-3}}$, see Appendix~\ref{App} for more. Thus, our constants are
 
 \begin{align*}
 	\sigma & = \frac{1}{d + 1}\sqrt{\frac{d}{d + 2}} \\
-	\rho & = \BigO(d^{-3})
+	\rho   & = \BigO \parens*{d^{-3}}
 \end{align*}
 
 Now it is time to recall our main goal.
 
-By definition $\abs{d - \hat d_k}$ is equal to arithmetic mean of $k$ i.i.d. copies of $Y_d$. Therefore, condition in Claim~\ref{Main} is equivalent to $F_k(\eps d \frac{\sqrt{k}}{\sigma}) - F_k(- \eps d \frac{\sqrt{k}}{\sigma}) \leq 1 - \delta$. After we apply Theorem~\ref{BE} we have to choose such $k$ that the following condition is satisfied.
+By definition $\abs*{d - \hat d_k}$ is equal to arithmetic mean of $k$ i.i.d. copies of $Y_d$. Therefore, condition in Claim~\ref{Main} is equivalent to $F_k\parens*{\eps d \frac{\sqrt{k}}{\sigma}} - F_k\parens*{- \eps d \frac{\sqrt{k}}{\sigma}} \leq 1 - \delta$. After we apply Theorem~\ref{BE} we have to choose such $k$ that the following condition is satisfied.
 
 \begin{equation}
-	2 \Phi(\eps d \frac{\sqrt{k}}{\sigma}) - 1 - 2\frac{C \rho}{\sigma^3 \sqrt{k}} \geq 1 - \delta
+	2 \Phi \parens*{ \eps d \frac{\sqrt{k}}{\sigma} } - 1 - 2\frac{C \rho}{\sigma^3 \sqrt{k}} \geq 1 - \delta
 \end{equation}
 
 Now it is obvious that such $k$ exists. Moreover,
 
 \begin{align*}
-	\frac{d}{\sigma} & = d(d + 1)\sqrt{\frac{d + 2}{d}} = \Omega(d^2) \\
+	\frac{d}{\sigma}      & = d(d + 1)\sqrt{\frac{d + 2}{d}} = \Omega(d^2) \\
 	\frac{\rho}{\sigma^3} & = \BigO(1)
 \end{align*}
 
-So, $k$ not not only exists, it is also not very large. Further calculations I will do later.
+So, $k$ not only exists, but also does not depend on $d$. Now, it remains to see that once we found some suitable $k = k_0$ for some constant $\eps = \eps_0$, we can choose $k(\eps) = \parens*{\frac{\eps_0}{\eps}}^2 k_0$ for all $\eps \leq \eps_0$ and $k(\eps) = k_0$ for all $\eps > \eps_0$. Thus, $k = \BigO \parens*{\frac{1}{\eps^2}}$.
+
+\appendix
+
+\section{Appendix}\label{App}
+
+We want to prove that $\Ex{\abs*{X}^3} = \BigO \parens*{d^{-3}}$. By definition,
+
+\begin{equation*}
+	\Ex{\abs*{X}^3} = \int_{0}^{1} d \parens*{1 - x}^{d - 1} \abs*{x - \frac{1}{d + 1}}^3
+\end{equation*}
+
+We split it into the following two parts
+
+\begin{align}
+	\int_{0}^{\frac{1}{d + 1}} d \parens*{1 - x}^{d - 1} \parens*{\frac{1}{d + 1} - x}^3 \label{XSmall} \\
+	\int_{\frac{1}{d + 1}}^{1} d \parens*{1 - x}^{d - 1} \parens*{x - \frac{1}{d + 1}}^3 \label{XLarge}
+\end{align}
+
+First, it is easy to see that integral~\ref{XLarge} is the beta function.
+
+\begin{equation*}
+	\eqref{XLarge} = d \frac{d}{d + 1} \int_0^1 (1 - x)^{d - 1} x^3 = \frac{d^2}{d + 1} B(4, d)
+\end{equation*}
+
+Since $d$ is a positive integer, the factor $B(4, d)$ can be replaced with $\frac{3! \parens*{d - 1}!}{\parens*{d + 3}!}$ which is $\BigO\parens*{d^{-4}}$.
+
+Thus, it remains to bound integral~\ref{XSmall}.
+
+\begin{equation*}
+	\eqref{XSmall} \leq d \int_{0}^{\frac{1}{d - 1}} \parens*{\frac{1}{d - 1} - x}^3 =  d \int_{0}^{\frac{1}{d - 1}} x^3 = \frac{d}{4} \parens*{\frac{1}{d - 1}}^4 = \BigO \parens*{d^{-3}}
+\end{equation*}

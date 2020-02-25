@@ -36,6 +36,7 @@
 \DeclarePairedDelimiter\ceil{\lceil}{\rceil}
 \DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
 \DeclarePairedDelimiter\segment{[}{]}
+\DeclarePairedDelimiter\parens{(}{)}
 
 \newcommand{\map}[2]{\set{#1 \mid #2}}
 \newcommand{\BigO}{\mathcal{O}}
@@ -43,8 +44,8 @@
 
 \newcommand{\eps}{\varepsilon}
 
-\newcommand{\Prob}[1]{P(#1)}
-\newcommand{\Ex}[1]{\mathbb{E}\segment{#1}}
+\newcommand{\Prob}[1]{P\left(#1\right)}
+\newcommand{\Ex}[1]{\mathbb{E}\segment*{#1}}
 
 \begin{document}
 
